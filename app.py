@@ -3,6 +3,9 @@ from transformers import pipeline
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+from transformers import pipeline
+
+sentiment_pipeline = pipeline("sentiment-analysis")
 
 custom_headers = {
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
@@ -27,6 +30,11 @@ def get_reviews(soup):
         r_content_element = r.select_one("span.review-text").text
         reviews.append(r_content_element)
         print(r_content_element)
+        if len(r_content_element)>512:
+            r_content_element = r_content_element[0:511]
+        data = [r_content_element]
+        print(sentiment_pipeline(data))
+
         
 # go from range 1 to 30, 30 will the maximum number of pages we look at for a general idea of customers's opinions
 for x in range(1,30): 
@@ -36,27 +44,8 @@ for x in range(1,30):
     # if there exists no 'next page' button on the page then stop looking for reviews, because that means there are no more reviews to look for after looking at the current page
     if soup.find('li', {'class': 'a-disabled a-last'}):
         break
-
-#for review in headphone_reviews:
-#    print(review)
-#   print("\n")
-
-
 '''
-reviewtext = soup.find_all('div',{'data-hook':'review'})
-product_reviews = []
-for i in reviewtext:
-    review = [j.get_text() for j in i.find_all("span",{'class':'review-text'})]
-    product_reviews.extend(review)
-        
-
 text_1 = "The pizza was quite bland. It could use a bit more seasoning."
 p_1 = TextBlob(text_1).sentiment.polarity
 print("Polarity of Text 1 is", p_1)
-
-from transformers import pipeline
-
-sentiment_pipeline = pipeline("sentiment-analysis")
-data = ["This pizza was okay."]
-print(sentiment_pipeline(data))
 '''
