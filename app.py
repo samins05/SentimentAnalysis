@@ -48,7 +48,8 @@ def get_sentiment(review):
     review_sentences = review.split('.')
     for sentence in review_sentences:
         data = [sentence]
-        print(sentiment_pipeline(data))
+        sentiment_info = sentiment_pipeline(data)
+        print(sentiment_info[0]["label"], ' ', sentiment_info[0]["score"])
 
 # data = [r_content_element]
 # print(sentiment_pipeline(data))
