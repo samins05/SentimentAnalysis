@@ -6,6 +6,9 @@ import pandas as pd
 from transformers import pipeline
 
 sentiment_pipeline = pipeline("sentiment-analysis")
+total_negative = 0
+total_positive = 0
+
 
 custom_headers = {
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
@@ -22,7 +25,7 @@ def get_soup(url,headers):
 
 
 # print the text reviews of each amazon review page
-def get_reviews(soup):
+def analyze_reviewpage(soup):
     #get all divs associated with each review 
     review_elements = soup.select("div.review")
     for r in review_elements:
@@ -30,22 +33,25 @@ def get_reviews(soup):
         r_content_element = r.select_one("span.review-text").text
         reviews.append(r_content_element)
         print(r_content_element)
-        if len(r_content_element)>512:
-            r_content_element = r_content_element[0:511]
-        data = [r_content_element]
+        get_sentiment(r_content_element)
+
+def analyze_reviews(url):   
+    # go from range 1 to 30, 30 will the maximum number of pages we look at for a general idea of customers's opinions
+    for x in range(1,30): 
+        soup = get_soup(url,custom_headers)
+        analyze_reviewpage(soup)
+        # if there exists no 'next page' button on the page then stop looking for reviews, because that means there are no more reviews to look for after looking at the current page
+        if soup.find('li', {'class': 'a-disabled a-last'}):
+            break
+
+def get_sentiment(review):
+    review_sentences = review.split('.')
+    for sentence in review_sentences:
+        data = [sentence]
         print(sentiment_pipeline(data))
 
-        
-# go from range 1 to 30, 30 will the maximum number of pages we look at for a general idea of customers's opinions
-for x in range(1,30): 
-    url = 'https://www.amazon.com/Bose-QuietComfort-45-Bluetooth-Canceling-Headphones/product-reviews/B098FKXT8L/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews&pageNumber={x}'
-    soup = get_soup(url,custom_headers)
-    get_reviews(soup)
-    # if there exists no 'next page' button on the page then stop looking for reviews, because that means there are no more reviews to look for after looking at the current page
-    if soup.find('li', {'class': 'a-disabled a-last'}):
-        break
-'''
-text_1 = "The pizza was quite bland. It could use a bit more seasoning."
-p_1 = TextBlob(text_1).sentiment.polarity
-print("Polarity of Text 1 is", p_1)
-'''
+# data = [r_content_element]
+# print(sentiment_pipeline(data))
+
+url = 'https://www.amazon.com/Bose-QuietComfort-45-Bluetooth-Canceling-Headphones/product-reviews/B098FKXT8L/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews&pageNumber={x}'
+analyze_reviews(url)
