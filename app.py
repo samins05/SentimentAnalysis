@@ -7,6 +7,8 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 sid_obj = SentimentIntensityAnalyzer()
 total_negative = 0
 total_positive = 0
+reviews = [] # array of all reviews on first page
+
 
 
 custom_headers = {
@@ -16,8 +18,6 @@ custom_headers = {
     "Connection": "keep-alive",
     "User-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15",
 }
-
-reviews = []
 
 def get_soup(url):
     response = requests.get(url, headers=custom_headers)
