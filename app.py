@@ -23,7 +23,6 @@ def get_soup(url):
     response = requests.get(url, headers=custom_headers)
     #create and return soup object to look at the html of each amazon review page
     soup = BeautifulSoup(response.text, "lxml")
-    print(url)
     return soup
 
 
@@ -42,9 +41,12 @@ def analyze_reviews(url):
     soup = get_soup(url)
     analyze_reviewpage(soup)
     print("Total sentiment ratio: ", get_sentimentratio())
-    if(get_sentimentratio()>.65):
+    if(get_sentimentratio()>.60):
         print("This product is receiving positive feedback from customers!")
-
+    elif(get_sentiment()<.40):
+        print("This product is receiving negative feedback from customers :("))
+    else: 
+        print("Customers have mixed feeling about this product.")
 def get_sentiment(review):
     #review_negative = 0 # number of sentences that are negative in the review
     #review_positive = 0 # number of sentences that are positive in the review 
