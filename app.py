@@ -45,6 +45,8 @@ def analyze_reviews(url):
         print("This product is receiving negative feedback from customers :(")
     else: 
         print("Customers have mixed feeling about this product.")
+
+
 def get_sentiment(review):
     #review_negative = 0 # number of sentences that are negative in the review
     #review_positive = 0 # number of sentences that are positive in the review 
@@ -68,10 +70,6 @@ def get_sentiment(review):
 def get_sentimentratio():
     return (total_positive*1.0)/(total_negative+total_positive)
 
-#print(sentiment_info[0]["label"], ' ', sentiment_info[0]["score"])
-
-# data = [r_content_element]
-# print(sentiment_pipeline(data))
 
 url = 'https://www.amazon.com/Bose-QuietComfort-45-Bluetooth-Canceling-Headphones/product-reviews/B098FKXT8L/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews'
 analyze_reviews(url)
