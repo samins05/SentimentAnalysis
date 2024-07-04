@@ -2,7 +2,6 @@ from transformers import pipeline
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
-from transformers import pipeline
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 sid_obj = SentimentIntensityAnalyzer()
@@ -11,16 +10,20 @@ total_positive = 0
 
 
 custom_headers = {
-    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
-    'accept-language': 'en-GB,en;q=0.9',
+    "Accept-language": "en-GB,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Cache-Control": "max-age=0",
+    "Connection": "keep-alive",
+    "User-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15",
 }
 
 reviews = []
 
-def get_soup(url,headers):
-    response = requests.get(url, headers=headers)
+def get_soup(url):
+    response = requests.get(url, headers=custom_headers)
     #create and return soup object to look at the html of each amazon review page
-    soup = BeautifulSoup(response.text, 'lxml')
+    soup = BeautifulSoup(response.text, "lxml")
+    print(url)
     return soup
 
 
@@ -36,13 +39,8 @@ def analyze_reviewpage(soup):
         get_sentiment(r_content_element)
 
 def analyze_reviews(url):   
-    # go from range 1 to 30, 30 will the maximum number of pages we look at for a general idea of customers's opinions
-    for x in range(1,999): 
-        soup = get_soup(url,custom_headers)
-        analyze_reviewpage(soup)
-        # if there exists no 'next page' button on the page then stop looking for reviews, because that means there are no more reviews to look for after looking at the current page
-        if soup.find('li', {'class': 'a-disabled a-last'}):
-            break
+    soup = get_soup(url)
+    analyze_reviewpage(soup)
     print("Total sentiment ratio: ", get_sentimentratio())
     if(get_sentimentratio()>.65):
         print("This product is receiving positive feedback from customers!")
@@ -75,5 +73,5 @@ def get_sentimentratio():
 # data = [r_content_element]
 # print(sentiment_pipeline(data))
 
-url = 'https://www.amazon.com/Bose-QuietComfort-45-Bluetooth-Canceling-Headphones/product-reviews/B098FKXT8L/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews&pageNumber={x}'
+url = 'https://www.amazon.com/Bose-QuietComfort-45-Bluetooth-Canceling-Headphones/product-reviews/B098FKXT8L/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews'
 analyze_reviews(url)
