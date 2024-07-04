@@ -44,7 +44,7 @@ def analyze_reviews(url):
     if(get_sentimentratio()>.60):
         print("This product is receiving positive feedback from customers!")
     elif(get_sentiment()<.40):
-        print("This product is receiving negative feedback from customers :("))
+        print("This product is receiving negative feedback from customers :(")
     else: 
         print("Customers have mixed feeling about this product.")
 def get_sentiment(review):
