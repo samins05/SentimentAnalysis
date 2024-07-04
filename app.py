@@ -1,7 +1,5 @@
-from transformers import pipeline
 from bs4 import BeautifulSoup
 import requests
-import pandas as pd
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 sid_obj = SentimentIntensityAnalyzer()
